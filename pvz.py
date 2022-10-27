@@ -15,7 +15,7 @@ class PlantBox(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((50, 50))
         self.image.fill("Orange")
-        self.rect = self.image.get_rect(topleft=(150, 50))
+        self.rect = self.image.get_rect(topleft=(250, 50))
         self.preview_plant = None
 
 
@@ -28,8 +28,16 @@ class Game:
         self.plant_group.add(plant)
         self.sprite_group.add(plant)
 
+    def display_money(self, screen):
+        self.money_surf = self.game_font.render(f'{self.money}$', False, (255, 255, 255))
+        self.money_rect = self.money_surf.get_rect(center=(125, 75))
+        screen.blit(self.money_surf, self.money_rect)
+
     def __init__(self):
         self.game_over = False
+
+        self.game_font = pygame.font.Font('font/font.ttf', 75)
+
 
         self.sprite_group = pygame.sprite.Group()
         self.plant_group = pygame.sprite.Group()
@@ -43,9 +51,10 @@ class Game:
         self.draggable_group.add(self.plant_box)
 
 
+        self.money = 50
+
         self.dragging_plant = None
         self.dragging_plant_group = pygame.sprite.GroupSingle()
-
 
         grass_x = 100
         grass_y = 200
@@ -78,24 +87,23 @@ class Game:
             
             self.cursor.mouse_events(event, self.draggable_group)
 
-            
-            
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Shovel Click Logic
                 if self.shovel.rect.colliderect(self.cursor.rect):
                     self.shovel.isDragging = True
 
                 # Grass click logic
-                for grass in self.grass_group:
-                    if grass.check_click(self.cursor.rect) and not grass.has_plant:
-                        self.add_plant(grass)
+                # for grass in self.grass_group:
+                #     if grass.check_click(self.cursor.rect) and not grass.has_plant:
+                #         self.add_plant(grass)
 
                 if self.plant_box.rect.colliderect(self.cursor.rect):
                     self.dragging_plant = Plant(pygame.mouse.get_pos())
                     self.dragging_plant_group.add(self.dragging_plant)
                 else:
-                    self.dragging_plant.kill()
-                    self.dragging_plant = None
+                    if self.dragging_plant:
+                        self.dragging_plant.kill()
+                        self.dragging_plant = None
                     
             
             # Shovel Logic
@@ -109,9 +117,12 @@ class Game:
                     self.shovel.isDragging = False
 
                 if self.dragging_plant is not None:
-                    if not pygame.sprite.spritecollide(self.dragging_plant, self.grass_group, False):
-                        self.dragging_plant.kill()
-                        self.dragging_plant = None
+                    grass = pygame.sprite.spritecollide(self.dragging_plant, self.grass_group, False)
+                    if grass:
+                        if not grass[0].has_plant:
+                            self.add_plant(grass[0])
+                    self.dragging_plant.kill()
+                    self.dragging_plant = None
 
     def run_logic(self):
         if not self.game_over:
@@ -154,6 +165,8 @@ class Game:
 
             self.shovel_sprite.update()
             self.shovel_sprite.draw(screen)
+
+            self.display_money(screen)
 
             
             if self.dragging_plant is not None:
