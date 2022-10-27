@@ -56,18 +56,18 @@ class Game:
         self.dragging_plant = None
         self.dragging_plant_group = pygame.sprite.GroupSingle()
 
-        grass_x = 100
-        grass_y = 200
-        grass_gap = 120
+        self.grass_x = 100
+        self.grass_y = 200
+        self.grass_gap = 120
 
         for i in range(5):
             for j in range(8):
-                grass = Grass((grass_x + (j * grass_gap), grass_y + (i * grass_gap)))
+                grass = Grass((self.grass_x + (j * self.grass_gap), self.grass_y + (i * self.grass_gap)))
                 self.grass_group.add(grass)
                 self.sprite_group.add(grass)
 
         for i in range(5):
-            enemy = Enemy((1000, grass_y + (i * grass_gap) - 25))
+            enemy = Enemy((1000, self.grass_y + (i * self.grass_gap) - 25))
             self.enemy_group.add(enemy)
             self.sprite_group.add(enemy)
 
@@ -87,6 +87,14 @@ class Game:
             
             self.cursor.mouse_events(event, self.draggable_group)
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    for i in range(5):
+                        enemy = Enemy((1000, self.grass_y + (i * self.grass_gap) - 25))
+                        self.enemy_group.add(enemy)
+                        self.sprite_group.add(enemy)
+
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Shovel Click Logic
                 if self.shovel.rect.colliderect(self.cursor.rect):
@@ -100,6 +108,7 @@ class Game:
                 if self.plant_box.rect.colliderect(self.cursor.rect):
                     self.dragging_plant = Plant(pygame.mouse.get_pos())
                     self.dragging_plant_group.add(self.dragging_plant)
+                    self.draggable_group.add(self.dragging_plant)
                 else:
                     if self.dragging_plant:
                         self.dragging_plant.kill()
