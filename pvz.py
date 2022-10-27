@@ -17,6 +17,7 @@ class PlantBox(pygame.sprite.Sprite):
         self.image.fill("Orange")
         self.rect = self.image.get_rect(topleft=(250, 50))
         self.preview_plant = None
+        self.price = 50
 
 
 
@@ -51,7 +52,7 @@ class Game:
         self.draggable_group.add(self.plant_box)
 
 
-        self.money = 50
+        self.money = 250
 
         self.dragging_plant = None
         self.dragging_plant_group = pygame.sprite.GroupSingle()
@@ -100,12 +101,7 @@ class Game:
                 if self.shovel.rect.colliderect(self.cursor.rect):
                     self.shovel.isDragging = True
 
-                # Grass click logic
-                # for grass in self.grass_group:
-                #     if grass.check_click(self.cursor.rect) and not grass.has_plant:
-                #         self.add_plant(grass)
-
-                if self.plant_box.rect.colliderect(self.cursor.rect):
+                if self.plant_box.rect.colliderect(self.cursor.rect) and self.money >= self.plant_box.price:
                     self.dragging_plant = Plant(pygame.mouse.get_pos())
                     self.dragging_plant_group.add(self.dragging_plant)
                     self.draggable_group.add(self.dragging_plant)
@@ -129,9 +125,11 @@ class Game:
                     grass = pygame.sprite.spritecollide(self.dragging_plant, self.grass_group, False)
                     if grass:
                         if not grass[0].has_plant:
+                            self.money -= self.plant_box.price
                             self.add_plant(grass[0])
                     self.dragging_plant.kill()
                     self.dragging_plant = None
+
 
     def run_logic(self):
         if not self.game_over:
