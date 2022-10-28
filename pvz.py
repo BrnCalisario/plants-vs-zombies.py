@@ -5,7 +5,7 @@ from enemy import Enemy
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
-GAME_NAME = 'Plants vz Zombies'
+GAME_NAME = 'Plantas vs Zumbis'
 
 size = [SCREEN_WIDTH, SCREEN_HEIGHT]
 
