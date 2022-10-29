@@ -7,7 +7,7 @@ class Shovel(sprite.Sprite):
 
         self.initial_pos = (1000, 20)
         self.image = Surface((50, 50))
-        self.image.fill("gold")
+        self.image.fill("purple")
         self.rect = self.image.get_rect(topleft=self.initial_pos)
         self.isDragging = False
 
