@@ -1,7 +1,8 @@
 import pygame
 from cursor import Cursor
-from plant import Plant, Grass, Shovel
+from plant import Peashooter, Plant
 from enemy import Enemy
+from terrain import Shovel, Grass
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -10,7 +11,12 @@ GAME_NAME = 'Plantas vs Zumbis'
 size = [SCREEN_WIDTH, SCREEN_HEIGHT]
 
 
-class PlantBox(pygame.sprite.Sprite):
+def dark_color(color_tuple):
+    reduce = 40
+    return color_tuple[0] - reduce, color_tuple[1] - reduce, color_tuple[2] - reduce
+
+
+class PeashooterBox(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.Surface((50, 50))
@@ -19,13 +25,16 @@ class PlantBox(pygame.sprite.Sprite):
         self.preview_plant = None
         self.price = 50
 
+    def getPlant(self, pos):
+        return Peashooter(pos)
+
 
 
 class Game:
     def add_plant(self, grass: Grass):
         grass.has_plant = True
         print("Adicionou")
-        plant = Plant(grass.rect.center)
+        plant = Peashooter(grass.rect.center)
         self.plant_group.add(plant)
         self.sprite_group.add(plant)
 
@@ -47,7 +56,8 @@ class Game:
         self.bullets_groups = pygame.sprite.Group()
         self.draggable_group = pygame.sprite.Group()
 
-        self.plant_box = PlantBox()
+
+        self.plant_box = PeashooterBox()
         self.sprite_group.add(self.plant_box)
         self.draggable_group.add(self.plant_box)
 
@@ -102,7 +112,9 @@ class Game:
                     self.shovel.isDragging = True
 
                 if self.plant_box.rect.colliderect(self.cursor.rect) and self.money >= self.plant_box.price:
-                    self.dragging_plant = Plant(pygame.mouse.get_pos())
+                    # self.dragging_plant = Plant(pygame.mouse.get_pos())
+                    self.dragging_plant = self.plant_box.getPlant(pygame.mouse.get_pos()) 
+                    
                     self.dragging_plant_group.add(self.dragging_plant)
                     self.draggable_group.add(self.dragging_plant)
                 else:
@@ -182,8 +194,8 @@ class Game:
                 grass = pygame.sprite.spritecollide(self.dragging_plant, self.grass_group, False)
                 if grass:
                     if not grass[0].has_plant:
-                        temp_image = Plant().image
-                        temp_image.fill("gray")
+                        temp_image = Peashooter().image
+                        temp_image.fill(dark_color(Peashooter().color))
                         temp_rect = temp_image.get_rect(center=(grass[0].rect.center))
                         screen.blit(temp_image, temp_rect)
 
@@ -193,13 +205,9 @@ class Game:
                 self.dragging_plant.rect.center = pygame.mouse.get_pos()
 
             
-
-
             self.cursor_sprite.update()
             self.cursor_sprite.draw(screen)
 
-            for plant in self.plant_group:
-                plant.update_bullets(self.enemy_group)
 
 
 def main():
