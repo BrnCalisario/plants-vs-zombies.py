@@ -163,6 +163,9 @@ class Game:
             else:
                 self.shovel.collide_detach()
 
+            
+                
+
 
     def display_frame(self, screen):
         screen.fill('Black')
@@ -175,12 +178,22 @@ class Game:
 
             self.display_money(screen)
 
-            
+            if self.dragging_plant is not None:
+                grass = pygame.sprite.spritecollide(self.dragging_plant, self.grass_group, False)
+                if grass:
+                    if not grass[0].has_plant:
+                        temp_image = Plant().image
+                        temp_image.fill("gray")
+                        temp_rect = temp_image.get_rect(center=(grass[0].rect.center))
+                        screen.blit(temp_image, temp_rect)
+
+
             if self.dragging_plant is not None:
                 self.dragging_plant_group.draw(screen)
                 self.dragging_plant.rect.center = pygame.mouse.get_pos()
 
             
+
 
             self.cursor_sprite.update()
             self.cursor_sprite.draw(screen)
