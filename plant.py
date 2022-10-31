@@ -1,6 +1,6 @@
-from pygame import Surface, sprite, mouse
-
+from pygame import Surface, sprite
         
+
 class Plant(sprite.Sprite):
     color = (255, 255, 255)
     image = Surface((50, 50))
@@ -9,8 +9,11 @@ class Plant(sprite.Sprite):
         
         self.color = (255, 255, 255)
         self.health = 100
+        
         self.image = Surface((50, 50))
+        
         self.image.fill(self.color)
+        
         self.rect = self.image.get_rect(center=pos)
         self.health = 50
 
@@ -29,7 +32,6 @@ class Plant(sprite.Sprite):
             self.kill()
 
     
-
 class Sunflower(Plant):
     def __init__(self, pos=(0, 0)):
         super().__init__(pos)
@@ -41,10 +43,6 @@ class Sunflower(Plant):
         self.price = 50
 
     
-        
-        
-
-
 class Peashooter(Plant):
     def __init__(self, pos=(0, 0)):
         super().__init__(pos)
@@ -70,8 +68,6 @@ class Peashooter(Plant):
             return Bullet(self.rect.center)
         self.shoot_delay += 5
         return None
-
-
 
 
 class PlantRange(sprite.Sprite):

@@ -40,7 +40,4 @@ class Grass(sprite.Sprite):
         self.is_dragging = False
         self.has_plant = False
 
-    def check_click(self, mouse):
-        if self.rect.colliderect(mouse):
-            return True
         

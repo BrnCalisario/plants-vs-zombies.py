@@ -1,3 +1,4 @@
+import random
 import pygame
 from cursor import Cursor
 from plant import *
@@ -11,6 +12,30 @@ SCREEN_HEIGHT = 800
 GAME_NAME = 'Plantas vs Zumbis'
 
 size = [SCREEN_WIDTH, SCREEN_HEIGHT]
+
+
+class SunLight(sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+
+        self.image = Surface((25, 25))
+        self.image.fill((245, 238, 105))
+        self.rect = self.image.get_rect(center=(150, 150))
+
+        self.initial_x = random.randint(150, 1000)
+        
+        self.rect.x = self.initial_x
+        self.rect.y = -20
+        self.final_y = random.randint(200, 600)
+
+    def check_click(self, mouse):
+        if self.rect.colliderect(mouse):
+            print("oi")
+            return True
+
+    def update(self):
+        if not self.rect.bottom > self.final_y:
+            self.rect.y += 2
 
 
 class Game:
@@ -30,11 +55,11 @@ class Game:
         self.money_rect = self.money_surf.get_rect(center=(125, 75))
         screen.blit(self.money_surf, self.money_rect)
 
+
     def __init__(self):
         self.game_over = False
 
         self.game_font = pygame.font.Font('font/font.ttf', 75)
-
 
         self.sprite_group = pygame.sprite.Group()
         self.plant_group = pygame.sprite.Group()
@@ -44,7 +69,6 @@ class Game:
         self.bullets_groups = pygame.sprite.Group()
         self.draggable_group = pygame.sprite.Group()
         self.boxes_group = pygame.sprite.Group()
-
 
         self.peashooter_box = PeashooterBox((250, 50))
         self.sprite_group.add(self.peashooter_box)
@@ -86,6 +110,15 @@ class Game:
         self.cursor_sprite.add(self.cursor)
 
 
+        self.sun_group = pygame.sprite.Group()
+        self.obstacle_timer = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.obstacle_timer, 1500)
+
+        
+
+
+
+
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: return True
@@ -100,8 +133,19 @@ class Game:
                         self.sprite_group.add(enemy)
 
 
+            if event.type == self.obstacle_timer:
+                if (len(self.sun_group)) <= 3:
+                    self.sun_group.add(SunLight())
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Shovel Click Logic
+
+                for sun in self.sun_group:
+                    if sun.check_click(self.cursor.rect):
+                        self.money += 50
+                        sun.kill()
+
+
                 if self.shovel.rect.colliderect(self.cursor.rect):
                     self.shovel.isDragging = True
 
@@ -175,10 +219,10 @@ class Game:
             else:
                 self.shovel.collide_detach()
 
+        
+
             
-                
-
-
+            
     def display_frame(self, screen):
         screen.fill('Black')
         if not self.game_over:
@@ -205,14 +249,13 @@ class Game:
                 self.dragging_plant_group.draw(screen)
                 self.dragging_plant.rect.center = pygame.mouse.get_pos()
 
+            self.sun_group.draw(screen)
+            self.sun_group.update()
 
-            
-
-
-            
             self.cursor_sprite.update()
             self.cursor_sprite.draw(screen)
 
+            
 
 
 def main():
@@ -229,6 +272,7 @@ def main():
         done = game.process_events()
         game.run_logic()
         game.display_frame(screen)
+
 
         pygame.display.update()
         clock.tick(60)
