@@ -5,6 +5,7 @@ from plant import *
 from enemy import Enemy
 from terrain import *
 from boxes import *
+from button import ButtonStart, ButtonConfig, ButtonExit
 
 
 SCREEN_WIDTH = 1200
@@ -255,7 +256,58 @@ class Game:
             self.cursor_sprite.update()
             self.cursor_sprite.draw(screen)
 
-            
+
+class Menu():
+    def __init__(self):
+        self.sprite_group = pygame.sprite.Group()
+        self.button_group = pygame.sprite.Group()
+        self.started = False
+        button_start = ButtonStart(250)
+        button_config = ButtonConfig(400)
+        button_exit = ButtonExit(550)
+
+        self.button_group.add(button_start)
+        self.button_group.add(button_config)
+        self.button_group.add(button_exit)
+
+        self.sprite_group.add(button_start)
+        self.sprite_group.add(button_config)
+        self.sprite_group.add(button_exit)
+
+        self.cursor = Cursor()
+        self.cursor_sprite = pygame.sprite.GroupSingle()
+        self.cursor_sprite.add(self.cursor)
+
+    def process_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return True
+
+            self.cursor.mouse_events(event, self.button_group)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for button in self.button_group:
+                    if button.check_click(self.cursor.rect.topleft):
+                        if button.do_action() == "exit":
+                            return True
+                        elif button.do_action() == "start":
+                            return "start"
+
+    def run_logic(self):
+        if not self.started:
+            for button in self.button_group:
+                if button.check_click(self.cursor.rect.topleft):
+                    button.do_action()
+
+    def display_frame(self, screen):
+        screen.fill('Black')
+
+        if not self.started:
+            self.sprite_group.draw(screen)
+            self.sprite_group.update()
+
+            self.cursor_sprite.update()
+            self.cursor_sprite.draw(screen)
 
 
 def main():
@@ -268,11 +320,24 @@ def main():
     clock = pygame.time.Clock()
     game = Game()
 
-    while not done:
-        done = game.process_events()
-        game.run_logic()
-        game.display_frame(screen)
+    states = ["MENU", "GAME", "GAMEOVER"]
+    actual_state = states[0]
 
+    menu = Menu()
+
+    while not done:
+        if actual_state == states[0]:
+            done = menu.process_events()
+            menu.run_logic()
+            menu.display_frame(screen)
+            if done == "start":
+                actual_state = states[1]
+                done = None
+
+        elif actual_state == states[1]:
+            done = game.process_events()
+            game.run_logic()
+            game.display_frame(screen)
 
         pygame.display.update()
         clock.tick(60)
@@ -281,4 +346,7 @@ def main():
 
 
 if __name__ == '__main__':
+   # pygame.mixer.init()
+    #music = pygame.mixer.music.load('main_theme.mp3')
+  #  pygame.mixer.music.play(loops=-1)
     main()
