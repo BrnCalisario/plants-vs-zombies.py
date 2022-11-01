@@ -312,6 +312,11 @@ class Menu():
 
 def main():
     pygame.init()
+
+    pygame.mixer.init()
+    music = pygame.mixer.music.load('main_theme.mp3')
+    pygame.mixer.music.play(loops=-1)
+
     screen = pygame.display.set_mode(size)
     pygame.mouse.set_visible(False)
     pygame.display.set_caption(GAME_NAME)
@@ -346,7 +351,5 @@ def main():
 
 
 if __name__ == '__main__':
-   # pygame.mixer.init()
-    #music = pygame.mixer.music.load('main_theme.mp3')
-  #  pygame.mixer.music.play(loops=-1)
+
     main()
