@@ -333,9 +333,9 @@ class Menu():
 def main():
     pygame.init()
 
-    pygame.mixer.init()
-    music = pygame.mixer.music.load('sfx/main_theme.mp3')
-    pygame.mixer.music.play(loops=-1)
+    # pygame.mixer.init()
+    # music = pygame.mixer.music.load('sfx/main_theme.mp3')
+    # pygame.mixer.music.play(loops=-1)
 
     screen = pygame.display.set_mode(size)
     pygame.mouse.set_visible(False)

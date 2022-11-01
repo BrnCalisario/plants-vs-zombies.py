@@ -16,7 +16,7 @@ class Enemy(pygame.sprite.Sprite):
 
 
 
-        self.zombie_walk = [zombie_walk1, zombie_walk2, zombie_walk3]
+        self.zombie_walk = [zombie_walk1, zombie_walk2, zombie_walk3, zombie_walk2]
         self.zombie_index = 0
 
         self.image = self.zombie_walk[self.zombie_index]
