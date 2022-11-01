@@ -1,10 +1,10 @@
 import random
 import pygame
 from cursor import Cursor
-from plant import *
+from plant import Peashooter, Sunflower, Bullet
 from enemy import Enemy
-from terrain import *
-from boxes import *
+from terrain import Shovel, Grass
+from boxes import PeashooterBox, SunflowerBox
 
 
 SCREEN_WIDTH = 1200
@@ -14,41 +14,50 @@ GAME_NAME = 'Plantas vs Zumbis'
 size = [SCREEN_WIDTH, SCREEN_HEIGHT]
 
 
-class SunLight(sprite.Sprite):
-    def __init__(self):
+class SunLight(pygame.sprite.Sprite):
+    def __init__(self, isRandom=True, pos=(0, 0)):
         super().__init__()
 
-        self.image = Surface((25, 25))
+        self.image = pygame.Surface((25, 25))
         self.image.fill((245, 238, 105))
-        self.rect = self.image.get_rect(center=(150, 150))
-
-        self.initial_x = random.randint(150, 1000)
+        self.rect = self.image.get_rect(center=pos)
+            
+        self.isRandom = isRandom
         
-        self.rect.x = self.initial_x
-        self.rect.y = -20
-        self.final_y = random.randint(200, 600)
+        
+        if isRandom:
+            self.initial_x = random.randint(150, 1000)
+            self.rect.x = self.initial_x
+            self.rect.y = -20
+            self.final_y = random.randint(200, 600)
 
     def check_click(self, mouse):
         if self.rect.colliderect(mouse):
-            print("oi")
+
             return True
 
     def update(self):
-        if not self.rect.bottom > self.final_y:
-            self.rect.y += 2
-
+        if self.isRandom:
+            if not self.rect.bottom > self.final_y:
+                self.rect.y += 2
+    
 
 class Game:
     def add_plant(self, grass: Grass, plantType):
         grass.has_plant = True
         print("Adicionou")
         plant = plantType(grass.rect.center)
-
+            
         if plant.shooter:
             self.shooter_plant_group.add(plant)
-
+        
+        if plant.__class__ == Sunflower().__class__:
+            self.sunflower_group.add(plant)
+        
         self.plant_group.add(plant)
         self.sprite_group.add(plant)
+        
+        plant.terrain = grass
 
     def display_money(self, screen):
         self.money_surf = self.game_font.render(f'{self.money}$', False, (255, 255, 255))
@@ -69,6 +78,8 @@ class Game:
         self.bullets_groups = pygame.sprite.Group()
         self.draggable_group = pygame.sprite.Group()
         self.boxes_group = pygame.sprite.Group()
+        self.sunflower_group = pygame.sprite.Group()
+
 
         self.peashooter_box = PeashooterBox((250, 50))
         self.sprite_group.add(self.peashooter_box)
@@ -79,6 +90,7 @@ class Game:
         self.sprite_group.add(self.sunflower_box)
         self.draggable_group.add(self.sunflower_box)
         self.boxes_group.add(self.sunflower_box)
+        
 
         self.money = 250
 
@@ -194,6 +206,7 @@ class Game:
                 if collide_plant:
                     enemy.speed = 0
                     enemy.give_damage(collide_plant[0])
+                    
                 else:
                     enemy.speed = 0.5
 
@@ -211,6 +224,13 @@ class Game:
                 collide_enemy = pygame.sprite.spritecollide(bullet, self.enemy_group, False)
                 if collide_enemy:
                     bullet.give_damage(collide_enemy[0])
+
+            
+            for sunflower in self.sunflower_group:
+                if sunflower.drop_sun():
+                    self.sun_group.add(SunLight(False, sunflower.rect.topleft))
+                
+
 
             collide_shovel = pygame.sprite.spritecollide(self.shovel, self.plant_group, False)
 
