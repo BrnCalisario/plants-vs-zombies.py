@@ -91,6 +91,12 @@ class Game:
         self.draggable_group.add(self.sunflower_box)
         self.boxes_group.add(self.sunflower_box)
         
+        self.wallnut_box = WallnutBox((450, 50))
+        self.sprite_group.add(self.wallnut_box)
+        self.draggable_group.add(self.wallnut_box)
+        self.boxes_group.add(self.wallnut_box)
+
+
 
         self.money = 250
 
@@ -127,10 +133,6 @@ class Game:
         pygame.time.set_timer(self.obstacle_timer, 1500)
 
         
-
-
-
-
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: return True
@@ -230,7 +232,6 @@ class Game:
                 if sunflower.drop_sun():
                     self.sun_group.add(SunLight(False, sunflower.rect.topleft))
                 
-
 
             collide_shovel = pygame.sprite.spritecollide(self.shovel, self.plant_group, False)
 
@@ -333,7 +334,7 @@ def main():
     pygame.init()
 
     pygame.mixer.init()
-    music = pygame.mixer.music.load('main_theme.mp3')
+    music = pygame.mixer.music.load('sfx/main_theme.mp3')
     pygame.mixer.music.play(loops=-1)
 
     screen = pygame.display.set_mode(size)

@@ -1,22 +1,23 @@
 from pygame import Surface, sprite
-        
+
 
 class Plant(sprite.Sprite):
     color = (255, 255, 255)
     image = Surface((50, 50))
+
     def __init__(self, pos=(0, 0)):
         super().__init__()
-        
+
         self.color = (255, 255, 255)
         self.health = 100
-        
+
         self.image = Surface((50, 50))
-        
+
         self.image.fill(self.color)
-        
+
         self.rect = self.image.get_rect(center=pos)
         self.health = 50
-        
+
         self.terrain = None
 
         self.price = 0
@@ -28,13 +29,26 @@ class Plant(sprite.Sprite):
     def update(self):
         self.image.fill(self.color)
         self.destroy()
-   
+
     def destroy(self):
-        if self.health <= 0 and self.terrain is not None:   
+        if self.health <= 0 and self.terrain is not None:
             self.terrain.has_plant = False
             self.kill()
 
-    
+
+class Wallnut(Plant):
+    def __init__(self, pos=(0, 0)):
+        super().__init__(pos)
+
+        self.color = (143, 100, 16)
+        self.image.fill(self.color)
+        self.shooter = False
+
+        self.price = 50
+        self.health = 500
+        
+
+
 class Sunflower(Plant):
     def __init__(self, pos=(0, 0)):
         super().__init__(pos)
@@ -44,13 +58,12 @@ class Sunflower(Plant):
         self.shooter = False
 
         self.price = 50
-        
+
         self.sun_delay = 0
-        
-    
+
     def update(self):
         pass
-    
+
     def drop_sun(self):
         if self.sun_delay >= 2000:
             # drop sun
@@ -60,7 +73,7 @@ class Sunflower(Plant):
         self.sun_delay += 5
         return False
 
-    
+
 class Peashooter(Plant):
     def __init__(self, pos=(0, 0)):
         super().__init__(pos)
@@ -76,7 +89,6 @@ class Peashooter(Plant):
 
         self.price = 100
 
-    
     def shoot(self):
         if self.shoot_delay >= 300:
             self.can_shoot = True
@@ -103,7 +115,7 @@ class Bullet(sprite.Sprite):
         self.image = Surface((10, 10))
         self.image.fill("red")
         self.rect = self.image.get_rect(center=pos)
-        
+
         self.damage = 5
 
     def give_damage(self, zombie):

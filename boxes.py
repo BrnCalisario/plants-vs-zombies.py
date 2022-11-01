@@ -30,3 +30,14 @@ class SunflowerBox(PlantBox):
 
     def getPlant(self, pos):
         return plant.Sunflower(pos)
+
+
+class WallnutBox(PlantBox):
+    def __init__(self, pos):
+        super().__init__(pos)
+        self.image.fill((143, 100, 16))
+        self.price = 50
+
+    def getPlant(self, pos):
+        return plant.Wallnut(pos)
+        
