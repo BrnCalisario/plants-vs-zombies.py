@@ -16,6 +16,8 @@ class Plant(sprite.Sprite):
         
         self.rect = self.image.get_rect(center=pos)
         self.health = 50
+        
+        self.terrain = None
 
         self.price = 0
 
@@ -28,7 +30,8 @@ class Plant(sprite.Sprite):
         self.destroy()
    
     def destroy(self):
-        if self.health <= 0:    
+        if self.health <= 0 and self.terrain is not None:   
+            self.terrain.has_plant = False
             self.kill()
 
     
@@ -41,6 +44,21 @@ class Sunflower(Plant):
         self.shooter = False
 
         self.price = 50
+        
+        self.sun_delay = 0
+        
+    
+    def update(self):
+        pass
+    
+    def drop_sun(self):
+        if self.sun_delay >= 2000:
+            # drop sun
+            self.sun_delay = 0
+            print("oi")
+            return True
+        self.sun_delay += 5
+        return False
 
     
 class Peashooter(Plant):
