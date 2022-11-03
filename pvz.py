@@ -20,27 +20,47 @@ class SunLight(pygame.sprite.Sprite):
 
         self.image = pygame.Surface((25, 25))
         self.image.fill((245, 238, 105))
-        self.rect = self.image.get_rect(center=pos)
-            
+        self.rect = self.image.get_rect(bottomleft=pos)
+
         self.isRandom = isRandom
-        
-        
+        self.initial_x = pos[0]
+        self.initial_y = pos[1]
+
         if isRandom:
             self.initial_x = random.randint(150, 1000)
             self.rect.x = self.initial_x
             self.rect.y = -20
             self.final_y = random.randint(200, 600)
+        else:
+            self.yvertice = 120
+            self.b = random.randint(9, 18)
+            self.a = ((self.b ** 2) * -1) / (4 * self.yvertice)
+            print(f"valor de A: {self.a}\n")
+            print(f"valor de B: {self.b}\n")
+            self.flag = True
+            self.direcao = random.randint(0, 1)
+            self.x = 0.8
 
     def check_click(self, mouse):
         if self.rect.colliderect(mouse):
-
             return True
 
     def update(self):
         if self.isRandom:
             if not self.rect.bottom > self.final_y:
                 self.rect.y += 2
-    
+        else:
+            if self.rect.y < self.initial_y:
+                self.y = ((self.a * (self.x ** 2)) + (self.b * self.x)) * -1
+                self.rect.y = self.initial_y + self.y
+
+                if self.direcao == 0:
+                    self.rect.x = self.initial_x + self.x
+                else:
+                    self.rect.x = self.initial_x + (self.x * -1)
+
+                self.x += 0.8
+
 
 class Game:
     def add_plant(self, grass: Grass, plantType):
@@ -230,8 +250,12 @@ class Game:
             
             for sunflower in self.sunflower_group:
                 if sunflower.drop_sun():
-                    self.sun_group.add(SunLight(False, sunflower.rect.topleft))
-                
+                    self.sun_group.add(SunLight(False, sunflower.rect.midbottom))
+                    self.sun_group.add(SunLight(False, sunflower.rect.midbottom))
+
+                    self.sun_group.add(SunLight(False, sunflower.rect.midbottom))
+
+
 
             collide_shovel = pygame.sprite.spritecollide(self.shovel, self.plant_group, False)
 
@@ -333,9 +357,7 @@ class Menu():
 def main():
     pygame.init()
 
-    # pygame.mixer.init()
-    # music = pygame.mixer.music.load('sfx/main_theme.mp3')
-    # pygame.mixer.music.play(loops=-1)
+    pygame.mixer.init()
 
     screen = pygame.display.set_mode(size)
     pygame.mouse.set_visible(False)
@@ -349,20 +371,32 @@ def main():
     actual_state = states[0]
 
     menu = Menu()
+    flag = True
 
     while not done:
         if actual_state == states[0]:
             done = menu.process_events()
             menu.run_logic()
             menu.display_frame(screen)
+
+            if flag:
+                pygame.mixer.music.load('sfx/menu_there.mp3')
+                pygame.mixer.music.play(loops=-1)
+                flag = False
+
             if done == "start":
                 actual_state = states[1]
                 done = None
-
+                flag = True
         elif actual_state == states[1]:
             done = game.process_events()
             game.run_logic()
             game.display_frame(screen)
+
+            if flag:
+                pygame.mixer.music.load('sfx/main_theme.mp3')
+                pygame.mixer.music.play(loops=-1)
+                flag = False
 
         pygame.display.update()
         clock.tick(60)
