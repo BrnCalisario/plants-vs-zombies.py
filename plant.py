@@ -1,9 +1,8 @@
-from pygame import Surface, sprite
+import pygame
 
-
-class Plant(sprite.Sprite):
+class Plant(pygame.sprite.Sprite):
     color = (255, 255, 255)
-    image = Surface((50, 50))
+    image = pygame.Surface((50, 50))
 
     def __init__(self, pos=(0, 0)):
         super().__init__()
@@ -11,7 +10,7 @@ class Plant(sprite.Sprite):
         self.color = (255, 255, 255)
         self.health = 100
 
-        self.image = Surface((50, 50))
+        self.image = pygame.Surface((50, 50))
 
         self.image.fill(self.color)
 
@@ -27,7 +26,6 @@ class Plant(sprite.Sprite):
         self.health -= damage
 
     def update(self):
-        self.image.fill(self.color)
         self.destroy()
 
     def destroy(self):
@@ -82,12 +80,20 @@ class Peashooter(Plant):
 
         self.image.fill(self.color)
         self.plant_range = PlantRange(self.rect.center)
-        self.range_sprite = sprite.GroupSingle(self.plant_range)
+        self.range_sprite = pygame.sprite.GroupSingle(self.plant_range)
         self.shoot_delay = 0
         self.shooter = True
         self.can_shoot = True
-
         self.price = 100
+
+
+        self.sprite_list = []
+        for i in range(8):
+            self.sprite_list.append(pygame.transform.scale2x(pygame.image.load(f"graphics/peashooter/pea_{i}.png").convert_alpha()))
+
+        self.pea_index = 0
+        self.image  = self.sprite_list[int(self.pea_index)]
+
 
     def shoot(self):
         if self.shoot_delay >= 300:
@@ -98,21 +104,29 @@ class Peashooter(Plant):
             return Bullet(self.rect.center)
         self.shoot_delay += 5
         return None
+    
+    def update(self):
+        self.animation_state()
+
+    def animation_state(self):
+        self.pea_index += 0.1
+        if self.pea_index >= len(self.sprite_list) : self.pea_index = 0
+        self.image  = self.sprite_list[int(self.pea_index)]
 
 
-class PlantRange(sprite.Sprite):
+class PlantRange(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
 
-        self.image = Surface((1000, 1))
+        self.image = pygame.Surface((1000, 1))
         self.image.fill('blue')
         self.rect = self.image.get_rect(topleft=pos)
 
 
-class Bullet(sprite.Sprite):
+class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
-        self.image = Surface((10, 10))
+        self.image = pygame.Surface((10, 10))
         self.image.fill("red")
         self.rect = self.image.get_rect(center=pos)
 
