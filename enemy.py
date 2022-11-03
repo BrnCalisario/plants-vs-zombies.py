@@ -1,7 +1,5 @@
 import pygame
-
-
-
+import random
 
 
 
@@ -15,11 +13,35 @@ class Enemy(pygame.sprite.Sprite):
         zombie_walk3 = pygame.image.load("graphics/zombie/zombie_walk3.png").convert_alpha()
 
 
+        cabeludo_walk = []
+        careca_walk = []
+        carecalvo_walk = []
+        flechado_walk = []
+        picaretado_walk = []
+        toca_walk = []
 
+        for i in range(1, 4):
+            cabeludo_walk.append(pygame.image.load(f"graphics/zombie/cabeludo_{i}.png").convert_alpha())
+            careca_walk.append(pygame.image.load(f"graphics/zombie/careca_{i}.png").convert_alpha())
+            carecalvo_walk.append(pygame.image.load(f"graphics/zombie/carecalvo_{i}.png").convert_alpha())
+            flechado_walk.append(pygame.image.load(f"graphics/zombie/flechado_{i}.png").convert_alpha())
+            picaretado_walk.append(pygame.image.load(f"graphics/zombie/picaretado_{i}.png").convert_alpha())
+            toca_walk.append(pygame.image.load(f"graphics/zombie/toca_{i}.png").convert_alpha())
+
+
+        cabeludo_walk.append(cabeludo_walk[1])
+        careca_walk.append(careca_walk[1])
+        carecalvo_walk.append(carecalvo_walk[1])
+        flechado_walk.append(flechado_walk[1])
+        picaretado_walk.append(picaretado_walk[1])
+        toca_walk.append(toca_walk[1])
         self.zombie_walk = [zombie_walk1, zombie_walk2, zombie_walk3, zombie_walk2]
+
+
         self.zombie_index = 0
 
-        self.image = self.zombie_walk[self.zombie_index]
+        self.zombie_type = random.choice([cabeludo_walk, careca_walk, carecalvo_walk, flechado_walk, picaretado_walk, toca_walk])
+        self.image = self.zombie_type[self.zombie_index]
 
         # self.image = Surface((50, 50))
         # self.image.fill("green")
@@ -54,5 +76,5 @@ class Enemy(pygame.sprite.Sprite):
 
     def animation_state(self):
         self.zombie_index += 0.05
-        if self.zombie_index >= len(self.zombie_walk) : self.zombie_index = 0
-        self.image = self.zombie_walk[int(self.zombie_index)]
+        if self.zombie_index >= len(self.zombie_type) : self.zombie_index = 0
+        self.image = self.zombie_type[int(self.zombie_index)]
