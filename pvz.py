@@ -87,9 +87,13 @@ class Game:
 
     def __init__(self):
         self.game_over = False
-
+        self.background = pygame.image.load("graphics/background.png").convert_alpha()
+        self.background = pygame.transform.scale(self.background, (1200,680))
+        self.background_rect = self.background.get_rect(topleft = (0,120))
+        self.menu = pygame.image.load("graphics/menuBar.png").convert_alpha()
+        self.menu = pygame.transform.scale(self.menu,(1200, 120))
+        self.menu_rect = self.menu.get_rect(topleft = (0,0))
         self.game_font = pygame.font.Font('font/font.ttf', 75)
-
         self.sprite_group = pygame.sprite.Group()
         self.plant_group = pygame.sprite.Group()
         self.shooter_plant_group = pygame.sprite.Group()
@@ -271,9 +275,10 @@ class Game:
     def display_frame(self, screen):
         screen.fill('Black')
         if not self.game_over:
+            screen.blit(self.menu, self.menu_rect)
+            screen.blit(self.background ,self.background_rect)
             self.sprite_group.draw(screen)
             self.sprite_group.update()
-
             self.shovel_sprite.update()
             self.shovel_sprite.draw(screen)
 
