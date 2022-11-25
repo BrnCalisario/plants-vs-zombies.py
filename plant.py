@@ -52,8 +52,8 @@ class Sunflower(Plant):
     def __init__(self, pos=(0, 0)):
         super().__init__(pos)
 
-        self.color = (252, 186, 3)
-        self.image.fill(self.color)
+        # self.color = (252, 186, 3)
+        # self.image.fill(self.color)
         self.shooter = False
 
         self.sprite_list = []
