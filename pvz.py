@@ -90,6 +90,19 @@ class Game:
 
         self.game_font = pygame.font.Font('font/font.ttf', 75)
 
+        #Variáveis de hordas
+        self.spawning = False
+        self.zombie_timer = pygame.USEREVENT + 2
+        self.break_time = pygame.USEREVENT + 3
+        self.second_break_time = pygame.USEREVENT + 4
+        self.super_horde = pygame.USEREVENT + 5
+        self.quantity = 1
+        self.quantity_hordes = 1
+        self.difficulty = 1
+        self.spawns = 0
+        self.horde_active = False
+        self.n_hordes = 0
+
         self.sprite_group = pygame.sprite.Group()
         self.plant_group = pygame.sprite.Group()
         self.shooter_plant_group = pygame.sprite.Group()
@@ -99,7 +112,6 @@ class Game:
         self.draggable_group = pygame.sprite.Group()
         self.boxes_group = pygame.sprite.Group()
         self.sunflower_group = pygame.sprite.Group()
-
 
         self.peashooter_box = PeashooterBox((250, 50))
         self.sprite_group.add(self.peashooter_box)
@@ -131,11 +143,6 @@ class Game:
                 self.grass_group.add(grass)
                 self.sprite_group.add(grass)
 
-        for i in range(5):
-            enemy = Enemy((1000, self.grass_y + (i * self.grass_gap) - 25))
-            self.enemy_group.add(enemy)
-            self.sprite_group.add(enemy)
-
         self.shovel = Shovel()
         self.shovel_sprite = pygame.sprite.GroupSingle()
         self.shovel_sprite.add(self.shovel)
@@ -145,12 +152,15 @@ class Game:
         self.cursor_sprite = pygame.sprite.GroupSingle()
         self.cursor_sprite.add(self.cursor)
 
-
         self.sun_group = pygame.sprite.Group()
         self.obstacle_timer = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.obstacle_timer, 1500)
 
-        
+        pygame.time.set_timer(self.obstacle_timer, 1500)
+        pygame.time.set_timer(self.zombie_timer, 8000)
+        pygame.time.set_timer(self.break_time, 2300)
+        pygame.time.set_timer(self.second_break_time, 1000)
+        pygame.time.set_timer(self.super_horde, 45000)
+
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: return True
@@ -164,10 +174,44 @@ class Game:
                         self.enemy_group.add(enemy)
                         self.sprite_group.add(enemy)
 
-
             if event.type == self.obstacle_timer:
                 if (len(self.sun_group)) <= 3:
                     self.sun_group.add(SunLight())
+
+            if not self.spawning:
+                if event.type == self.zombie_timer:
+                    self.spawning = True
+
+            if self.spawning:
+                self.spawns += 1
+                num = random.randint(0, 4)
+                x = random.randint(1300, 1800)
+                enemy = Enemy((x, self.grass_y + (num * self.grass_gap) - 25))
+                self.enemy_group.add(enemy)
+                self.sprite_group.add(enemy)
+
+                if self.spawns >= int(self.quantity):
+                    self.spawns = 0
+                    self.spawning = False
+                    self.difficulty += 1
+                    self.quantity += 1/2
+
+            if not self.horde_active:
+                if event.type == self.super_horde:
+                    self.horde_active = True
+
+            if self.horde_active:
+                if event.type == self.second_break_time:
+                    if self.n_hordes <= int(self.quantity_hordes):
+                        self.n_hordes += 1
+                        for i in range(5):
+                            enemy = Enemy((1200, self.grass_y + (i * self.grass_gap) - 25))
+                            self.enemy_group.add(enemy)
+                            self.sprite_group.add(enemy)
+
+                if self.n_hordes >= int(self.quantity_hordes):
+                    self.horde_active = False
+                    self.quantity_hordes += 2
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Shovel Click Logic
