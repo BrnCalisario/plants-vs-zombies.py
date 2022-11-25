@@ -120,8 +120,6 @@ class Game:
         self.draggable_group.add(self.wallnut_box)
         self.boxes_group.add(self.wallnut_box)
 
-
-
         self.money = 250
 
         self.dragging_plant = None
@@ -194,8 +192,6 @@ class Game:
                         
                         self.dragging_plant_group.add(self.dragging_plant)
                         self.draggable_group.add(self.dragging_plant)
-
-
                         break
                     else:
                         if self.dragging_plant:
@@ -255,9 +251,6 @@ class Game:
             for sunflower in self.sunflower_group:
                 if sunflower.drop_sun():
                     self.sun_group.add(SunLight(False, sunflower.rect.midbottom))
-                    self.sun_group.add(SunLight(False, sunflower.rect.midbottom))
-
-                    self.sun_group.add(SunLight(False, sunflower.rect.midbottom))
 
 
 
@@ -289,8 +282,8 @@ class Game:
                 grass = pygame.sprite.spritecollide(self.dragging_plant, self.grass_group, False)
                 if grass:
                     if not grass[0].has_plant:
-                        temp_image = self.dragging_plant.__class__.image
-                        temp_image.fill(self.dragging_plant.__class__.color)
+                        temp_image = self.dragging_plant.image
+                        # temp_image.fill(self.dragging_plant.__class__.color)
                         temp_rect = temp_image.get_rect(center=(grass[0].rect.center))
                         screen.blit(temp_image, temp_rect)
 

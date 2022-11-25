@@ -19,15 +19,10 @@ class Shovel(sprite.Sprite):
         else:
             self.rect.topleft = self.initial_pos
 
-        if self.selected_plant is not None:
-            self.selected_plant.image.fill("brown")
-
     def collide_logic(self, plant):
         self.selected_plant = plant
 
     def collide_detach(self):
-        if self.selected_plant is not None:
-            self.selected_plant.image.fill("white")
         self.selected_plant = None
 
 
@@ -35,7 +30,7 @@ class Grass(sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
         self.image = Surface((25, 25))
-        self.image.fill('blue')
+        self.image.fill('green')
         self.rect = self.image.get_rect(center=pos)
         self.is_dragging = False
         self.has_plant = False

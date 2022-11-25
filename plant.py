@@ -24,6 +24,7 @@ class Plant(pygame.sprite.Sprite):
     def recive_damage(self, damage):
         print(self.health)
         self.health -= damage
+        if (self.health <= 0): self.kill()
 
     def update(self):
         self.destroy()
@@ -55,12 +56,18 @@ class Sunflower(Plant):
         self.image.fill(self.color)
         self.shooter = False
 
-        self.price = 50
+        self.sprite_list = []
+        for i in range(8):
+            self.sprite_list.append(pygame.transform.scale2x(pygame.image.load(f"graphics/sunflower/sunflower_{i}.png").convert_alpha()))
 
+        self.spr_index = 0
+        self.image = self.sprite_list[int(self.spr_index)]
+
+        self.price = 50
         self.sun_delay = 0
 
     def update(self):
-        pass
+        self.animation_state()
 
     def drop_sun(self):
         if self.sun_delay >= 2000:
@@ -70,6 +77,11 @@ class Sunflower(Plant):
             return True
         self.sun_delay += 5
         return False
+
+    def animation_state(self):
+        self.spr_index += 0.09
+        if self.spr_index >= len(self.sprite_list) : self.spr_index = 0
+        self.image  = self.sprite_list[int(self.spr_index)]
 
 
 class Peashooter(Plant):
@@ -91,9 +103,13 @@ class Peashooter(Plant):
         for i in range(8):
             self.sprite_list.append(pygame.transform.scale2x(pygame.image.load(f"graphics/peashooter/pea_{i}.png").convert_alpha()))
 
-        self.pea_index = 0
-        self.image  = self.sprite_list[int(self.pea_index)]
+        self.spr_index = 0
+        self.image  = self.sprite_list[int(self.spr_index)]
 
+    def animation_state(self):
+        self.spr_index += 0.1
+        if self.spr_index >= len(self.sprite_list) : self.spr_index = 0
+        self.image = self.sprite_list[int(self.spr_index)]
 
     def shoot(self):
         if self.shoot_delay >= 300:
@@ -108,10 +124,6 @@ class Peashooter(Plant):
     def update(self):
         self.animation_state()
 
-    def animation_state(self):
-        self.pea_index += 0.1
-        if self.pea_index >= len(self.sprite_list) : self.pea_index = 0
-        self.image  = self.sprite_list[int(self.pea_index)]
 
 
 class PlantRange(pygame.sprite.Sprite):
