@@ -81,7 +81,7 @@ class Game:
 
     def display_money(self, screen):
         self.money_surf = self.game_font.render(f'{self.money}$', False, (255, 255, 255))
-        self.money_rect = self.money_surf.get_rect(center=(125, 75))
+        self.money_rect = self.money_surf.get_rect(topleft=(28, 44))
         screen.blit(self.money_surf, self.money_rect)
 
 
@@ -93,7 +93,7 @@ class Game:
         self.menu = pygame.image.load("graphics/menuBar.png").convert_alpha()
         self.menu = pygame.transform.scale(self.menu,(1200, 120))
         self.menu_rect = self.menu.get_rect(topleft = (0,0))
-        self.game_font = pygame.font.Font('font/font.ttf', 75)
+        self.game_font = pygame.font.Font('font/font.ttf', 66)
         self.sprite_group = pygame.sprite.Group()
         self.plant_group = pygame.sprite.Group()
         self.shooter_plant_group = pygame.sprite.Group()
@@ -105,17 +105,17 @@ class Game:
         self.sunflower_group = pygame.sprite.Group()
 
 
-        self.peashooter_box = PeashooterBox((250, 50))
+        self.peashooter_box = PeashooterBox((178, 38))
         self.sprite_group.add(self.peashooter_box)
         self.draggable_group.add(self.peashooter_box)
         self.boxes_group.add(self.peashooter_box)
 
-        self.sunflower_box = SunflowerBox((350, 50))
+        self.sunflower_box = SunflowerBox((312, 38))
         self.sprite_group.add(self.sunflower_box)
         self.draggable_group.add(self.sunflower_box)
         self.boxes_group.add(self.sunflower_box)
         
-        self.wallnut_box = WallnutBox((450, 50))
+        self.wallnut_box = WallnutBox((448, 38))
         self.sprite_group.add(self.wallnut_box)
         self.draggable_group.add(self.wallnut_box)
         self.boxes_group.add(self.wallnut_box)
@@ -125,18 +125,19 @@ class Game:
         self.dragging_plant = None
         self.dragging_plant_group = pygame.sprite.GroupSingle()
 
-        self.grass_x = 100
-        self.grass_y = 200
-        self.grass_gap = 120
+        self.grass_x = 345
+        self.grass_y = 250
+        self.grass_gap_x = 94
+        self.grass_gap_y = 112
 
         for i in range(5):
-            for j in range(8):
-                grass = Grass((self.grass_x + (j * self.grass_gap), self.grass_y + (i * self.grass_gap)))
+            for j in range(9):
+                grass = Grass((self.grass_x + (j * self.grass_gap_x), self.grass_y + (i * self.grass_gap_y)))
                 self.grass_group.add(grass)
                 self.sprite_group.add(grass)
 
         for i in range(5):
-            enemy = Enemy((1000, self.grass_y + (i * self.grass_gap) - 25))
+            enemy = Enemy((1000, self.grass_y + (i * self.grass_gap_y) - 25))
             self.enemy_group.add(enemy)
             self.sprite_group.add(enemy)
 
