@@ -165,6 +165,7 @@ class Game:
 
         pygame.time.set_timer(self.obstacle_timer, 1500)
         pygame.time.set_timer(self.zombie_timer, 7000)
+        
         pygame.time.set_timer(self.break_time, 2300)
         pygame.time.set_timer(self.second_break_time, 1000)
         pygame.time.set_timer(self.super_horde, 45000)
@@ -193,8 +194,10 @@ class Game:
             if self.spawning:
                 self.spawns += 1
                 num = random.randint(0, 4)
+                
                 x = random.randint(1300, 1600)
                 enemy = Enemy((x, self.grass_y + (num * self.grass_gap_y) - 25))
+
                 self.enemy_group.add(enemy)
                 self.sprite_group.add(enemy)
 
@@ -214,6 +217,7 @@ class Game:
                         self.n_hordes += 1
                         for i in range(5):
                             enemy = Enemy((1200, self.grass_y + (i * self.grass_gap_y) - 25))
+
                             self.enemy_group.add(enemy)
                             self.sprite_group.add(enemy)
 
