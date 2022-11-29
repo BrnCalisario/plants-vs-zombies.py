@@ -24,7 +24,7 @@ class Plant(pygame.sprite.Sprite):
     def recive_damage(self, damage):
         print(self.health)
         self.health -= damage
-        if (self.health <= 0): self.kill()
+        if (self.health <= 0): self.destroy()
 
     def update(self):
         self.destroy()
@@ -40,12 +40,29 @@ class Wallnut(Plant):
         super().__init__(pos)
 
         self.color = (143, 100, 16)
-        self.image.fill(self.color)
         self.shooter = False
 
         self.price = 50
         self.health = 500
+
+        self.sprite_list = []
+        for i in range(3):
+            self.sprite_list.append(pygame.transform.smoothscale(pygame.image.load(f"graphics/wallnut/wallnut_{i}.png").convert_alpha(),(64, 64)))
+
+        self.spr_index = 0
+        self.image  = self.sprite_list[int(self.spr_index)]
+    
+    def update(self):
+        self.change_state()
+        print(f"vida: {self.health}, index: {self.spr_index}")
+
+    def change_state(self):
+        if self.spr_index == 0 and self.health <= 350:
+            self.spr_index = 1
+        elif self.spr_index == 1 and self.health <= 100:
+            self.spr_index = 2
         
+        self.image = self.sprite_list[int(self.spr_index)]
 
 
 class Sunflower(Plant):
@@ -73,7 +90,6 @@ class Sunflower(Plant):
         if self.sun_delay >= 2000:
             # drop sun
             self.sun_delay = 0
-            print("oi")
             return True
         self.sun_delay += 5
         return False
@@ -138,10 +154,9 @@ class PlantRange(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.Surface((10, 10))
-        self.image.fill("red")
+        self.image = pygame.transform.smoothscale(pygame.image.load("graphics/tiros/tiro.png").convert_alpha(), (15, 15))
         self.rect = self.image.get_rect(center=pos)
-
+        self.rect.x += 40
         self.damage = 5
 
     def give_damage(self, zombie):

@@ -15,7 +15,7 @@ class PlantBox(pygame.sprite.Sprite):
 class PeashooterBox(PlantBox):
     def __init__(self, pos):
         super().__init__(pos)
-        self.image.fill("Orange")
+        self.image = pygame.transform.scale2x(pygame.image.load("graphics/peashooter/pea_0.png").convert_alpha())
         self.price = 100
 
     def getPlant(self, pos):
@@ -25,7 +25,7 @@ class PeashooterBox(PlantBox):
 class SunflowerBox(PlantBox):
     def __init__(self, pos):
         super().__init__(pos)
-        self.image.fill("Gold")
+        self.image = pygame.transform.scale2x(pygame.image.load("graphics/sunflower/sunflower_0.png").convert_alpha())
         self.price = 50
 
     def getPlant(self, pos):
@@ -35,7 +35,7 @@ class SunflowerBox(PlantBox):
 class WallnutBox(PlantBox):
     def __init__(self, pos):
         super().__init__(pos)
-        self.image.fill((143, 100, 16))
+        self.image = pygame.transform.smoothscale(pygame.image.load("graphics/wallnut/wallnut_0.png").convert_alpha(),(64, 64))
         self.price = 50
 
     def getPlant(self, pos):
