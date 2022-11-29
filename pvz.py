@@ -79,10 +79,24 @@ class Game:
         plant.terrain = grass
 
     def display_money(self, screen):
+        
+        self.game_font = pygame.font.Font('font/font.ttf', 72)
         self.money_surf = self.game_font.render(f'{self.money}$', False, (255, 255, 255))
-        self.money_rect = self.money_surf.get_rect(topleft=(28, 44))
-        screen.blit(self.money_surf, self.money_rect)
+        
+        self.game_font = pygame.font.Font('font/font.ttf', 30)
+        self.cost_peashooter = self.game_font.render('100$', False, (255, 255, 255))
+        self.cost_sunflower = self.game_font.render('50$', False, (255, 255, 255))
+        self.cost_wallnut = self.game_font.render('50$', False, (255, 255, 255))
 
+        self.money_rect = self.money_surf.get_rect(topleft=(28, 44))
+        self.peashooter_rect = self.cost_peashooter.get_rect(topleft=(155, 20))
+        self.sunflower_rect = self.cost_sunflower.get_rect(topleft=(300, 20))
+        self.wallnut_rect = self.cost_wallnut.get_rect(topleft=(430, 20))
+        
+        screen.blit(self.money_surf, self.money_rect)
+        screen.blit(self.cost_peashooter, self.peashooter_rect)
+        screen.blit(self.cost_sunflower, self.sunflower_rect)
+        screen.blit(self.cost_wallnut, self.wallnut_rect)
 
     def __init__(self):
         self.game_over = False
@@ -433,8 +447,8 @@ def main():
             menu.display_frame(screen)
 
             if flag:
-                pygame.mixer.music.load('sfx/menu_there.mp3')
-                pygame.mixer.music.play(loops=-1)
+              #  pygame.mixer.music.load('sfx/menu_there.mp3')
+              #  pygame.mixer.music.play(loops=-1)
                 flag = False
 
             if done == "start":
@@ -447,8 +461,8 @@ def main():
             game.display_frame(screen)
 
             if flag:
-                pygame.mixer.music.load('sfx/main_theme.mp3')
-                pygame.mixer.music.play(loops=-1)
+             #   pygame.mixer.music.load('sfx/main_theme.mp3')
+              #  pygame.mixer.music.play(loops=-1)
                 flag = False
 
         pygame.display.update()
