@@ -12,7 +12,7 @@ def image_load(path):
 class Button(pygame.sprite.Sprite):
     def __init__(self, pos, path):
         super().__init__()
-        self.initial_pos = (400, pos)
+        self.initial_pos = pos
         self.image = pygame.image.load(path).convert_alpha()
         self.rect = self.image.get_rect(topleft=self.initial_pos)
         self.isHovering = False

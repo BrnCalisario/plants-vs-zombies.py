@@ -1,13 +1,12 @@
-from pygame import Surface, sprite, mouse
+from pygame import Surface, sprite, mouse, image, transform
 
 
 class Shovel(sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.initial_pos = (1000, 20)
-        self.image = Surface((50, 50))
-        self.image.fill("purple")
+        self.initial_pos = (1075, 30)
+        self.image = transform.smoothscale(image.load("graphics\pa\pa.png").convert_alpha(), (64, 64))
         self.rect = self.image.get_rect(topleft=self.initial_pos)
         self.isDragging = False
 
@@ -31,6 +30,7 @@ class Grass(sprite.Sprite):
         super().__init__()
         self.image = Surface((25, 25))
         self.image.fill('green')
+        self.image.set_alpha(0)
         self.rect = self.image.get_rect(center=pos)
         self.is_dragging = False
         self.has_plant = False

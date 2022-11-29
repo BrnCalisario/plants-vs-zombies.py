@@ -18,8 +18,7 @@ class SunLight(pygame.sprite.Sprite):
     def __init__(self, isRandom=True, pos=(0, 0)):
         super().__init__()
 
-        self.image = pygame.Surface((25, 25))
-        self.image.fill((245, 238, 105))
+        self.image = pygame.transform.smoothscale(pygame.image.load("graphics/sol/sol.png").convert_alpha(), (22, 22))
         self.rect = self.image.get_rect(bottomleft=pos)
 
         self.isRandom = isRandom
@@ -80,10 +79,24 @@ class Game:
         plant.terrain = grass
 
     def display_money(self, screen):
+        
+        self.game_font = pygame.font.Font('font/font.ttf', 72)
         self.money_surf = self.game_font.render(f'{self.money}$', False, (255, 255, 255))
-        self.money_rect = self.money_surf.get_rect(topleft=(28, 44))
-        screen.blit(self.money_surf, self.money_rect)
+        
+        self.game_font = pygame.font.Font('font/font.ttf', 30)
+        self.cost_peashooter = self.game_font.render('100$', False, (255, 255, 255))
+        self.cost_sunflower = self.game_font.render('50$', False, (255, 255, 255))
+        self.cost_wallnut = self.game_font.render('50$', False, (255, 255, 255))
 
+        self.money_rect = self.money_surf.get_rect(topleft=(28, 44))
+        self.peashooter_rect = self.cost_peashooter.get_rect(topleft=(155, 20))
+        self.sunflower_rect = self.cost_sunflower.get_rect(topleft=(300, 20))
+        self.wallnut_rect = self.cost_wallnut.get_rect(topleft=(430, 20))
+        
+        screen.blit(self.money_surf, self.money_rect)
+        screen.blit(self.cost_peashooter, self.peashooter_rect)
+        screen.blit(self.cost_sunflower, self.sunflower_rect)
+        screen.blit(self.cost_wallnut, self.wallnut_rect)
 
     def __init__(self):
         self.game_over = False
@@ -163,12 +176,11 @@ class Game:
         self.sun_group = pygame.sprite.Group()
         self.obstacle_timer = pygame.USEREVENT + 1
 
-        pygame.time.set_timer(self.obstacle_timer, 1500)
+        pygame.time.set_timer(self.obstacle_timer, 7500)
         pygame.time.set_timer(self.zombie_timer, 7000)
-        
         pygame.time.set_timer(self.break_time, 2300)
         pygame.time.set_timer(self.second_break_time, 1000)
-        pygame.time.set_timer(self.super_horde, 45000)
+        pygame.time.set_timer(self.super_horde, 80000)
 
     def process_events(self):
         for event in pygame.event.get():
@@ -184,7 +196,6 @@ class Game:
                         self.sprite_group.add(enemy)
 
             if event.type == self.obstacle_timer:
-                if (len(self.sun_group)) <= 3:
                     self.sun_group.add(SunLight())
 
             if not self.spawning:
@@ -205,7 +216,7 @@ class Game:
                     self.spawns = 0
                     self.spawning = False
                     self.difficulty += 1
-                    self.quantity += 1/2
+                    self.quantity = 1/2 * (self.difficulty ** 1/2) + 1
 
             if not self.horde_active:
                 if event.type == self.super_horde:
@@ -277,6 +288,9 @@ class Game:
             for enemy in self.enemy_group:
                 collide_plant = pygame.sprite.spritecollide(enemy, self.plant_group, False)
 
+                if enemy.rect[0] < 230:
+                    self.game_over = True
+
                 if collide_plant:
                     enemy.speed = 0
                     enemy.give_damage(collide_plant[0])
@@ -313,9 +327,6 @@ class Game:
             else:
                 self.shovel.collide_detach()
 
-        
-
-            
             
     def display_frame(self, screen):
         screen.fill('Black')
@@ -353,12 +364,16 @@ class Game:
 
 class Menu():
     def __init__(self):
+        self.game_font = pygame.font.Font('font/Zombie Slayer.ttf', 72)
         self.sprite_group = pygame.sprite.Group()
         self.button_group = pygame.sprite.Group()
         self.started = False
-        button_start = ButtonStart(250)
-        button_config = ButtonConfig(400)
-        button_exit = ButtonExit(550)
+        button_start = ButtonStart((450, 250))
+        button_config = ButtonConfig((400, 400))
+        button_exit = ButtonExit((470, 550))
+        
+        self.title = self.game_font.render(GAME_NAME, False, (255, 255, 255))
+        self.title.get_rect(topleft=(400, 240))
 
         self.button_group.add(button_start)
         self.button_group.add(button_config)
@@ -395,6 +410,8 @@ class Menu():
 
     def display_frame(self, screen):
         screen.fill('Black')
+        
+        screen.blit(self.title, (290, 120))
 
         if not self.started:
             self.sprite_group.draw(screen)
@@ -430,8 +447,8 @@ def main():
             menu.display_frame(screen)
 
             if flag:
-                pygame.mixer.music.load('sfx/menu_there.mp3')
-                pygame.mixer.music.play(loops=-1)
+              #  pygame.mixer.music.load('sfx/menu_there.mp3')
+              #  pygame.mixer.music.play(loops=-1)
                 flag = False
 
             if done == "start":
@@ -444,8 +461,8 @@ def main():
             game.display_frame(screen)
 
             if flag:
-                pygame.mixer.music.load('sfx/main_theme.mp3')
-                pygame.mixer.music.play(loops=-1)
+             #   pygame.mixer.music.load('sfx/main_theme.mp3')
+              #  pygame.mixer.music.play(loops=-1)
                 flag = False
 
         pygame.display.update()
