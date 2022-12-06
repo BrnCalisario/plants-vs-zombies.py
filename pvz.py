@@ -5,7 +5,7 @@ from plant import Peashooter, Sunflower, Bullet
 from enemy import Enemy
 from terrain import *
 from boxes import *
-from button import ButtonStart, ButtonConfig, ButtonExit
+from button import ButtonStart, ButtonConfig, ButtonExit, ButtonRestart
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -34,8 +34,8 @@ class SunLight(pygame.sprite.Sprite):
             self.yvertice = 120
             self.b = random.randint(9, 18)
             self.a = ((self.b ** 2) * -1) / (4 * self.yvertice)
-            # print(f"valor de A: {self.a}\n")
-            # print(f"valor de B: {self.b}\n")
+            print(f"valor de A: {self.a}\n")
+            print(f"valor de B: {self.b}\n")
             self.flag = True
             self.direcao = random.randint(0, 1)
             self.x = 0.8
@@ -421,6 +421,55 @@ class Menu():
             self.cursor_sprite.draw(screen)
 
 
+class GameOver():
+    def __init__(self):
+        self.game_font = pygame.font.Font('font/Zombie Slayer.ttf', 72)
+        self.sprite_group = pygame.sprite.Group()
+        self.button_group = pygame.sprite.Group()
+
+        button_restart = ButtonRestart((535, 550))
+
+        self.image = pygame.image.load('graphics/brain.jpg').convert_alpha()
+        self.title = self.game_font.render('GAME OVER', False, (255, 255, 255))
+        self.title.get_rect(topleft=(500, 240))
+
+        self.button_group.add(button_restart)
+        self.sprite_group.add(button_restart)
+
+        self.cursor = Cursor()
+        self.cursor_sprite = pygame.sprite.GroupSingle()
+        self.cursor_sprite.add(self.cursor)
+
+    def process_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return True
+
+            self.cursor.mouse_events(event, self.button_group)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for button in self.button_group:
+                    if button.check_click(self.cursor.rect.topleft):
+                        if button.do_action() == "restart":
+                            return True
+
+    def run_logic(self):
+        for button in self.button_group:
+            if button.check_click(self.cursor.rect.topleft):
+                button.do_action()
+
+    def display_frame(self, screen):
+        screen.fill('Black')
+
+        screen.blit(self.title, (430, 120))
+        screen.blit(self.image, (350, 300))
+
+        self.sprite_group.draw(screen)
+        self.sprite_group.update()
+        self.cursor_sprite.update()
+        self.cursor_sprite.draw(screen)
+
+
 def main():
     pygame.init()
 
@@ -433,11 +482,12 @@ def main():
     done = False
     clock = pygame.time.Clock()
     game = Game()
+    menu = Menu()
+    gameOver = GameOver()
 
     states = ["MENU", "GAME", "GAMEOVER"]
     actual_state = states[0]
 
-    menu = Menu()
     flag = True
 
     while not done:
@@ -459,9 +509,22 @@ def main():
             done = game.process_events()
             game.run_logic()
             game.display_frame(screen)
-
+            if game.game_over:
+                actual_state = states[2]
             if flag:
                 pygame.mixer.music.load('sfx/main_theme.mp3')
+                pygame.mixer.music.play(loops=-1)
+                flag = False
+
+        elif actual_state == states[2]:
+            restart = gameOver.process_events()
+            gameOver.run_logic()
+            gameOver.display_frame(screen)
+
+            if restart:
+                actual_state = states[0]
+            if flag:
+                pygame.mixer.music.load('sfx/menu_there.mp3')
                 pygame.mixer.music.play(loops=-1)
                 flag = False
 

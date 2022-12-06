@@ -54,7 +54,7 @@ class Wallnut(Plant):
     
     def update(self):
         self.change_state()
-    
+        print(f"vida: {self.health}, index: {self.spr_index}")
 
     def change_state(self):
         if self.spr_index == 0 and self.health <= 350:
@@ -146,7 +146,7 @@ class PlantRange(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
 
-        self.image = pygame.Surface((1200 - pos[0], 1))
+        self.image = pygame.Surface((1000, 1))
         self.image.fill('blue')
         self.rect = self.image.get_rect(topleft=pos)
 

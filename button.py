@@ -73,3 +73,16 @@ class ButtonExit(Button):
 
     def do_action(self):
         return "exit"
+
+class ButtonRestart(Button):
+    def __init__(self, pos):
+        super().__init__(pos, 'graphics/buttons/restart1.png')
+
+    def change_image(self):
+        if self.isHovering:
+            self.image = pygame.image.load('graphics/buttons/restart2.png').convert_alpha()
+        else:
+            self.image = pygame.image.load('graphics/buttons/restart1.png').convert_alpha()
+
+    def do_action(self):
+        return "restart"
