@@ -34,8 +34,8 @@ class SunLight(pygame.sprite.Sprite):
             self.yvertice = 120
             self.b = random.randint(9, 18)
             self.a = ((self.b ** 2) * -1) / (4 * self.yvertice)
-            print(f"valor de A: {self.a}\n")
-            print(f"valor de B: {self.b}\n")
+            # print(f"valor de A: {self.a}\n")
+            # print(f"valor de B: {self.b}\n")
             self.flag = True
             self.direcao = random.randint(0, 1)
             self.x = 0.8
@@ -447,8 +447,8 @@ def main():
             menu.display_frame(screen)
 
             if flag:
-              #  pygame.mixer.music.load('sfx/menu_there.mp3')
-              #  pygame.mixer.music.play(loops=-1)
+                pygame.mixer.music.load('sfx/menu_there.mp3')
+                pygame.mixer.music.play(loops=-1)
                 flag = False
 
             if done == "start":
@@ -461,8 +461,8 @@ def main():
             game.display_frame(screen)
 
             if flag:
-             #   pygame.mixer.music.load('sfx/main_theme.mp3')
-              #  pygame.mixer.music.play(loops=-1)
+                pygame.mixer.music.load('sfx/main_theme.mp3')
+                pygame.mixer.music.play(loops=-1)
                 flag = False
 
         pygame.display.update()
