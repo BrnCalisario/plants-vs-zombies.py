@@ -188,12 +188,12 @@ class Game:
             
             self.cursor.mouse_events(event, self.draggable_group)
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
-                    for i in range(5):
-                        enemy = Enemy((1000, self.grass_y + (i * self.grass_gap_y) - 25))
-                        self.enemy_group.add(enemy)
-                        self.sprite_group.add(enemy)
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_DOWN:
+            #         for i in range(5):
+            #             enemy = Enemy((400, self.grass_y + (i * self.grass_gap_y) - 25))
+            #             self.enemy_group.add(enemy)
+            #             # self.sprite_group.add(enemy)
 
             if event.type == self.obstacle_timer:
                     self.sun_group.add(SunLight())
@@ -210,7 +210,7 @@ class Game:
                 enemy = Enemy((x, self.grass_y + (num * self.grass_gap_y) - 25))
 
                 self.enemy_group.add(enemy)
-                self.sprite_group.add(enemy)
+                # self.sprite_group.add(enemy)
 
                 if self.spawns >= int(self.quantity):
                     self.spawns = 0
@@ -230,7 +230,7 @@ class Game:
                             enemy = Enemy((1200, self.grass_y + (i * self.grass_gap_y) - 25))
 
                             self.enemy_group.add(enemy)
-                            self.sprite_group.add(enemy)
+                            # self.sprite_group.add(enemy)
 
                 if self.n_hordes >= int(self.quantity_hordes):
                     self.horde_active = False
@@ -335,6 +335,8 @@ class Game:
             screen.blit(self.background ,self.background_rect)
             self.sprite_group.draw(screen)
             self.sprite_group.update()
+            self.enemy_group.draw(screen)
+            self.enemy_group.update()
             self.shovel_sprite.update()
             self.shovel_sprite.draw(screen)
 
@@ -509,25 +511,31 @@ def main():
             done = game.process_events()
             game.run_logic()
             game.display_frame(screen)
-            if game.game_over:
-                actual_state = states[2]
+            
             if flag:
                 pygame.mixer.music.load('sfx/main_theme.mp3')
                 pygame.mixer.music.play(loops=-1)
                 flag = False
 
+            if game.game_over:
+                flag = True
+                game.enemy_group.empty()
+                game.game_over = False
+                actual_state = states[2]
+
         elif actual_state == states[2]:
             restart = gameOver.process_events()
             gameOver.run_logic()
             gameOver.display_frame(screen)
-
-            if restart:
-                actual_state = states[0]
+            
             if flag:
                 pygame.mixer.music.load('sfx/menu_there.mp3')
                 pygame.mixer.music.play(loops=-1)
                 flag = False
 
+            if restart:
+                actual_state = states[0]
+            
         pygame.display.update()
         clock.tick(60)
 
