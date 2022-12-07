@@ -85,7 +85,7 @@ class Sunflower(Plant):
         self.animation_state()
 
     def drop_sun(self):
-        if self.sun_delay >= 4000:
+        if self.sun_delay >= 3400:
             # drop sun
             self.sun_delay = 0
             return True

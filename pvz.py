@@ -188,7 +188,7 @@ class Game:
         pygame.time.set_timer(self.zombie_timer, 7000)
         pygame.time.set_timer(self.break_time, 2300)
         pygame.time.set_timer(self.second_break_time, 1000)
-        pygame.time.set_timer(self.super_horde, 35000)
+        pygame.time.set_timer(self.super_horde, 50000)
         pygame.time.set_timer(self.zombie_sound, 15000)
 
     def process_events(self):
@@ -255,7 +255,7 @@ class Game:
 
                 if self.n_hordes >= int(self.quantity_hordes):
                     self.horde_active = False
-                    self.quantity_hordes += 2
+                    self.quantity_hordes += 3
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Shovel Click Logic
@@ -340,10 +340,11 @@ class Game:
                         self.shoot.play()
 
             for bullet in self.bullets_groups:
-                collide_enemy = pygame.sprite.spritecollide(bullet, self.enemy_group, False)
-                if collide_enemy:
-                    bullet.give_damage(collide_enemy[0])
-                    self.damage.play()
+                for enemy in self.enemy_group:
+                    collide_enemy = enemy.rect.collidepoint((bullet.rect.x, bullet.rect.y))
+                    if collide_enemy:
+                        bullet.give_damage(enemy)
+                        self.damage.play()
             
             for sunflower in self.sunflower_group:
                 if sunflower.drop_sun():
@@ -537,7 +538,7 @@ def main():
                 flag = False
 
             if done == "start":
-                pygame.time.set_timer(game.super_horde, 60000)
+                pygame.time.set_timer(game.super_horde, 50000)
                 actual_state = states[1]
                 done = None
                 flag = True
