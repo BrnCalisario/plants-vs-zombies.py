@@ -188,7 +188,7 @@ class Game:
         pygame.time.set_timer(self.zombie_timer, 7000)
         pygame.time.set_timer(self.break_time, 2300)
         pygame.time.set_timer(self.second_break_time, 1000)
-        pygame.time.set_timer(self.super_horde, 35000)
+        pygame.time.set_timer(self.super_horde, 50000)
         pygame.time.set_timer(self.zombie_sound, 15000)
 
     def process_events(self):
@@ -537,7 +537,7 @@ def main():
                 flag = False
 
             if done == "start":
-                pygame.time.set_timer(game.super_horde, 60000)
+                pygame.time.set_timer(game.super_horde, 50000)
                 actual_state = states[1]
                 done = None
                 flag = True
