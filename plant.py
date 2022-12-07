@@ -22,7 +22,6 @@ class Plant(pygame.sprite.Sprite):
         self.price = 0
 
     def recive_damage(self, damage):
-        print(self.health)
         self.health -= damage
         if (self.health <= 0): self.destroy()
 
@@ -54,7 +53,6 @@ class Wallnut(Plant):
     
     def update(self):
         self.change_state()
-        print(f"vida: {self.health}, index: {self.spr_index}")
 
     def change_state(self):
         if self.spr_index == 0 and self.health <= 350:
@@ -87,7 +85,7 @@ class Sunflower(Plant):
         self.animation_state()
 
     def drop_sun(self):
-        if self.sun_delay >= 2000:
+        if self.sun_delay >= 4000:
             # drop sun
             self.sun_delay = 0
             return True
@@ -146,7 +144,7 @@ class PlantRange(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
 
-        self.image = pygame.Surface((1000, 1))
+        self.image = pygame.Surface((1200 - pos[0], 1))
         self.image.fill('blue')
         self.rect = self.image.get_rect(topleft=pos)
 

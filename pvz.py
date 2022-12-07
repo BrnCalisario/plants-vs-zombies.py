@@ -34,8 +34,6 @@ class SunLight(pygame.sprite.Sprite):
             self.yvertice = 120
             self.b = random.randint(9, 18)
             self.a = ((self.b ** 2) * -1) / (4 * self.yvertice)
-            print(f"valor de A: {self.a}\n")
-            print(f"valor de B: {self.b}\n")
             self.flag = True
             self.direcao = random.randint(0, 1)
             self.x = 0.8
@@ -64,9 +62,8 @@ class SunLight(pygame.sprite.Sprite):
 class Game:
     def add_plant(self, grass: Grass, plantType):
         grass.has_plant = True
-        print("Adicionou")
         plant = plantType(grass.rect.center)
-            
+
         if plant.shooter:
             self.shooter_plant_group.add(plant)
         
@@ -74,7 +71,6 @@ class Game:
             self.sunflower_group.add(plant)
         
         self.plant_group.add(plant)
-        self.sprite_group.add(plant)
         
         plant.terrain = grass
 
@@ -101,6 +97,16 @@ class Game:
     def __init__(self):
         self.game_over = False
 
+        self.shoot = pygame.mixer.Sound('sfx/shoot.mp3')
+        self.damage = pygame.mixer.Sound('sfx/damage.mp3')
+
+        self.zombie_sound1 = pygame.mixer.Sound('sfx/zombie_sound1.mp3')
+        self.zombie_sound2 = pygame.mixer.Sound('sfx/zombie_sound2.mp3')
+        self.zombie_sound3 = pygame.mixer.Sound('sfx/zombie_sound3.mp3')
+
+        self.shoot.set_volume(0.3)
+        self.damage.set_volume(0.3)
+
         self.background = pygame.image.load("graphics/background.png").convert_alpha()
         self.background = pygame.transform.scale(self.background, (1200,680))
         self.background_rect = self.background.get_rect(topleft = (0,120))
@@ -114,6 +120,8 @@ class Game:
         self.break_time = pygame.USEREVENT + 3
         self.second_break_time = pygame.USEREVENT + 4
         self.super_horde = pygame.USEREVENT + 5
+        self.zombie_sound = pygame.USEREVENT + 6
+
         self.quantity = 1
         self.quantity_hordes = 1
         self.difficulty = 1
@@ -176,11 +184,12 @@ class Game:
         self.sun_group = pygame.sprite.Group()
         self.obstacle_timer = pygame.USEREVENT + 1
 
-        pygame.time.set_timer(self.obstacle_timer, 7500)
+        pygame.time.set_timer(self.obstacle_timer, 12000)
         pygame.time.set_timer(self.zombie_timer, 7000)
         pygame.time.set_timer(self.break_time, 2300)
         pygame.time.set_timer(self.second_break_time, 1000)
-        pygame.time.set_timer(self.super_horde, 80000)
+        pygame.time.set_timer(self.super_horde, 35000)
+        pygame.time.set_timer(self.zombie_sound, 15000)
 
     def process_events(self):
         for event in pygame.event.get():
@@ -221,6 +230,18 @@ class Game:
             if not self.horde_active:
                 if event.type == self.super_horde:
                     self.horde_active = True
+
+            if self.zombie_sound:
+                num = random.randint(1, 220)
+
+                if num == 1:
+                    self.zombie_sound1.play()
+                elif num == 2:
+                    self.zombie_sound2.play()
+                elif num == 3:
+                    self.zombie_sound3.play()
+
+                num = 4
 
             if self.horde_active:
                 if event.type == self.second_break_time:
@@ -302,17 +323,27 @@ class Game:
                 bullets = None
                 if pygame.sprite.spritecollide(plant.plant_range, self.enemy_group, False):
                     bullets = plant.shoot()
-
                 if bullets is not None:
                     self.bullets_groups.add(bullets)
                     self.sprite_group.add(bullets)
 
+                    count = 0
+                    for plant in self.plant_group:
+                        count+=1
+
+                    num = 0
+
+                    if num > 0:
+                        num = random.randint(1, count)
+
+                    if num == 1:
+                        self.shoot.play()
 
             for bullet in self.bullets_groups:
                 collide_enemy = pygame.sprite.spritecollide(bullet, self.enemy_group, False)
                 if collide_enemy:
                     bullet.give_damage(collide_enemy[0])
-
+                    self.damage.play()
             
             for sunflower in self.sunflower_group:
                 if sunflower.drop_sun():
@@ -335,6 +366,8 @@ class Game:
             screen.blit(self.background ,self.background_rect)
             self.sprite_group.draw(screen)
             self.sprite_group.update()
+            self.plant_group.draw(screen)
+            self.plant_group.update()
             self.enemy_group.draw(screen)
             self.enemy_group.update()
             self.shovel_sprite.update()
@@ -504,6 +537,7 @@ def main():
                 flag = False
 
             if done == "start":
+                pygame.time.set_timer(game.super_horde, 60000)
                 actual_state = states[1]
                 done = None
                 flag = True
@@ -520,6 +554,18 @@ def main():
             if game.game_over:
                 flag = True
                 game.enemy_group.empty()
+                game.plant_group.empty()
+                game.sun_group.empty()
+                game.sunflower_group.empty()
+                game.shooter_plant_group.empty()
+                pygame.time.set_timer(game.super_horde, 0)
+
+                for grass in game.grass_group:
+                    if grass.has_plant:
+                        grass.has_plant = False
+
+
+                game.money = 250
                 game.game_over = False
                 actual_state = states[2]
 
