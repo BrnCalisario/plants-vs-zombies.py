@@ -580,6 +580,9 @@ def main():
                 game.enemy_group.empty()
                 game.plant_group.empty()
                 game.difficulty = 1
+                game.spawns = 0
+                game.quantity = 1
+                game.n_hordes = 0
                 game.quantity_hordes = 1
                 game.sun_group.empty()
                 game.sunflower_group.empty()
