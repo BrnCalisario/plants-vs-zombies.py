@@ -85,7 +85,7 @@ class Sunflower(Plant):
         self.animation_state()
 
     def drop_sun(self):
-        if self.sun_delay >= 3400:
+        if self.sun_delay >= 4000:
             # drop sun
             self.sun_delay = 0
             return True
@@ -158,8 +158,8 @@ class Bullet(pygame.sprite.Sprite):
         self.damage = 5
 
     def give_damage(self, zombie):
-        zombie.recive_damage(self.damage)
         self.destroy()
+        return zombie.recive_damage(self.damage)
 
     def update(self):
         self.rect.x += 10

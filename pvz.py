@@ -96,6 +96,7 @@ class Game:
 
     def __init__(self):
         self.game_over = False
+        self.score = 0
 
         self.shoot = pygame.mixer.Sound('sfx/shoot.mp3')
         self.damage = pygame.mixer.Sound('sfx/damage.mp3')
@@ -255,7 +256,7 @@ class Game:
 
                 if self.n_hordes >= int(self.quantity_hordes):
                     self.horde_active = False
-                    self.quantity_hordes += 3
+                    self.quantity_hordes = 1 + self.quantity_hordes * self.quantity_hordes
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Shovel Click Logic
@@ -340,11 +341,11 @@ class Game:
                         self.shoot.play()
 
             for bullet in self.bullets_groups:
-                for enemy in self.enemy_group:
-                    collide_enemy = enemy.rect.collidepoint((bullet.rect.x, bullet.rect.y))
-                    if collide_enemy:
-                        bullet.give_damage(enemy)
-                        self.damage.play()
+                collide_enemy = pygame.sprite.spritecollide(bullet, self.enemy_group, False)
+                if collide_enemy:
+                    if bullet.give_damage(collide_enemy[0]) == -1:
+                        self.score+=5
+                    self.damage.play()
             
             for sunflower in self.sunflower_group:
                 if sunflower.drop_sun():
@@ -375,6 +376,12 @@ class Game:
             self.shovel_sprite.draw(screen)
 
             self.display_money(screen)
+
+            self.game_font = pygame.font.Font('font/font.ttf', 72)
+            self.score_surf = self.game_font.render(f'Score: {self.score}', False, (255, 255, 255))
+            self.score_rect = self.score_surf.get_rect(topleft=(820, 14))
+
+            screen.blit(self.score_surf, self.score_rect)
 
 
             if self.dragging_plant is not None:
@@ -475,6 +482,10 @@ class GameOver():
         self.cursor = Cursor()
         self.cursor_sprite = pygame.sprite.GroupSingle()
         self.cursor_sprite.add(self.cursor)
+        self.score = 0
+
+    def set_score(self, score):
+        self.score = score
 
     def process_events(self):
         for event in pygame.event.get():
@@ -497,8 +508,14 @@ class GameOver():
     def display_frame(self, screen):
         screen.fill('Black')
 
+
+        self.game_font = pygame.font.Font('font/font.ttf', 72)
+        self.score_surf = self.game_font.render(f'Score Final: {self.score}', False, (255, 255, 255))
+        self.score_surf.get_rect(topleft=(350, 550))
+
         screen.blit(self.title, (430, 120))
-        screen.blit(self.image, (350, 300))
+        screen.blit(self.score_surf, (430, 240))
+        screen.blit(self.image, (350, 350))
 
         self.sprite_group.draw(screen)
         self.sprite_group.update()
@@ -556,10 +573,14 @@ def main():
                 flag = True
                 game.enemy_group.empty()
                 game.plant_group.empty()
+                game.difficulty = 1
+                game.quantity_hordes = 1
                 game.sun_group.empty()
                 game.sunflower_group.empty()
                 game.shooter_plant_group.empty()
                 pygame.time.set_timer(game.super_horde, 0)
+                gameOver.set_score(game.score)
+                game.score = 0
 
                 for grass in game.grass_group:
                     if grass.has_plant:
