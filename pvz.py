@@ -13,7 +13,6 @@ GAME_NAME = 'Plantas vs Zumbis'
 
 size = [SCREEN_WIDTH, SCREEN_HEIGHT]
 
-
 class SunLight(pygame.sprite.Sprite):
     def __init__(self, isRandom=True, pos=(0, 0)):
         super().__init__()
@@ -483,8 +482,14 @@ class GameOver():
         self.cursor_sprite = pygame.sprite.GroupSingle()
         self.cursor_sprite.add(self.cursor)
         self.score = 0
+        self.text = ""
 
-    def set_score(self, score):
+    def set_score(self, score, new_high = False):
+        if new_high:
+            self.text = "New High Score! "
+        else:
+            self.text = "Score Final: "
+
         self.score = score
 
     def process_events(self):
@@ -505,12 +510,12 @@ class GameOver():
             if button.check_click(self.cursor.rect.topleft):
                 button.do_action()
 
-    def display_frame(self, screen):
+    def display_frame(self, screen, max_score):
         screen.fill('Black')
 
 
         self.game_font = pygame.font.Font('font/font.ttf', 72)
-        self.score_surf = self.game_font.render(f'Score Final: {self.score}', False, (255, 255, 255))
+        self.score_surf = self.game_font.render(f"{self.text}: {self.score} / High Score: {max_score}", False, (255, 255, 255))
         self.score_surf.get_rect(topleft=(350, 550))
 
         screen.blit(self.title, (430, 120))
@@ -540,6 +545,7 @@ def main():
 
     states = ["MENU", "GAME", "GAMEOVER"]
     actual_state = states[0]
+    max_score = 0
 
     flag = True
 
@@ -579,8 +585,15 @@ def main():
                 game.sunflower_group.empty()
                 game.shooter_plant_group.empty()
                 pygame.time.set_timer(game.super_horde, 0)
-                gameOver.set_score(game.score)
+
+                if game.score > max_score:
+                    max_score = game.score
+                    gameOver.set_score(game.score, True)
+                else:
+                    gameOver.set_score(game.score)
+
                 game.score = 0
+
 
                 for grass in game.grass_group:
                     if grass.has_plant:
@@ -594,7 +607,7 @@ def main():
         elif actual_state == states[2]:
             restart = gameOver.process_events()
             gameOver.run_logic()
-            gameOver.display_frame(screen)
+            gameOver.display_frame(screen, max_score)
             
             if flag:
                 pygame.mixer.music.load('sfx/menu_there.mp3')
