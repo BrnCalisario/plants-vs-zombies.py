@@ -64,9 +64,9 @@ class Enemy(pygame.sprite.Sprite):
 
     def recive_damage(self, damage):
         self.health -= damage
-        print(self.health)
         if (self.health <= 0):
             self.kill()
+            return -1
 
     def give_damage(self, plant):
         if self.damage_delay == 200:

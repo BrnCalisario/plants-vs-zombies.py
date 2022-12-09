@@ -158,8 +158,8 @@ class Bullet(pygame.sprite.Sprite):
         self.damage = 5
 
     def give_damage(self, zombie):
-        zombie.recive_damage(self.damage)
         self.destroy()
+        return zombie.recive_damage(self.damage)
 
     def update(self):
         self.rect.x += 10
